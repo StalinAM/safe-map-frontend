@@ -1,0 +1,46 @@
+---
+// login.astro
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout title='Iniciar Sesión'>
+  <div class='login-container'>
+    <h1>Iniciar sesión</h1>
+    <form id='login-form'>
+      <input type='email' name='email' placeholder='Correo' required />
+      <input
+        type='password'
+        name='password'
+        placeholder='Contraseña'
+        required
+      />
+      <button type='submit'>Entrar</button>
+    </form>
+
+    <p id='error' style='color: red;'></p>
+  </div>
+</Layout>
+<script>
+  import { login } from '../lib/auth.ts'
+
+  document
+    .getElementById('login-form')
+    .addEventListener('submit', async (e) => {
+      e.preventDefault()
+
+      const form = e.target
+      const email = form.email.value
+      const password = form.password.value
+
+      console.log('Login attempt:', { email, password })
+      window.location.href = '/'
+      // const result = await login(email, password)
+
+      // if (result.success) {
+      //   localStorage.setItem('token', result.token)
+      //   window.location.href = '/'
+      // } else {
+      //   document.getElementById('error').innerText = result.message
+      // }
+    })
+</script>
