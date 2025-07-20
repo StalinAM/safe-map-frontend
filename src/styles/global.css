@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-
+@import '@fontsource-variable/roboto';
 @theme {
   --color-blackc: #090c11;
   --color-blackcc: #202028;
@@ -7,4 +7,8 @@
   --color-whitecc: #a6a9ae;
   --color-grayc: #2d2d2e;
   --color-graycc: #212028;
+}
+
+body {
+  font-family: 'Roboto Variable', sans-serif;
 }
