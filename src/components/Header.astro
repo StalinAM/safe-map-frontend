@@ -1,10 +1,134 @@
 <header class='max-w-7xl mx-auto p-4'>
   <nav class='w-full flex justify-between items-center'>
-    <a href='/'><h1>SafeMap</h1></a>
-    <div class='rounded-full border bg-transparent px-4 py-2 flex gap-4'>
-      <a class='text-white rounded-full' href='/login'>Iniciar Sesión</a><a
-        class='bg-whitecc'>Registrarse</a
+    <a href='/' class='text-3xl font-bold text-white'> SafeMap </a>
+
+    <div class='container-user flex items-center text-md hidden'>
+      <span
+        class='user relative z-10 px-4 py-2 rounded-full text-white uppercase transition-colors duration-300'
+        >Usuario</span
       >
+      <button
+        class='logout relative group flex items-center justify-center gap-x-1 z-10 font-semibold hover:text-black hover:bg-whitec cursor-pointer bg-whitecc px-4 py-2 rounded-full text-blackcc transition-colors duration-300'
+      >
+        <span>Cerrar Sesión</span>
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          class='size-6 group-hover:translate-x-1 transition-transform ease-in-out'
+          width='24'
+          height='24'
+          viewBox='0 0 24 24'
+          fill='none'
+          stroke='currentColor'
+          stroke-width='2'
+          stroke-linecap='round'
+          stroke-linejoin='round'
+          ><path stroke='none' d='M0 0h24v24H0z' fill='none'></path><path
+            d='M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2'
+          ></path><path d='M9 12h12l-3 -3'></path><path d='M18 15l3 -3'
+          ></path></svg
+        >
+      </button>
+    </div>
+    <div
+      class='container-auth relative flex items-center rounded-full border bg-transparent font-semibold cursor-pointer overflow-hidden'
+    >
+      <!-- Fondo deslizante -->
+      <div
+        class='bg-slider absolute top-0 bottom-0 left-1/2 w-1/2 rounded-full bg-whitec transition-all duration-300 ease-in-out z-0'
+      >
+      </div>
+
+      <!-- Botón Iniciar Sesión -->
+      <a
+        href='/login'
+        class='login relative z-10 hover:text-black px-4 py-2 rounded-full text-whitec transition-colors duration-300'
+      >
+        Iniciar Sesión
+      </a>
+
+      <!-- Botón Registrarse -->
+      <a
+        href='/register'
+        class='register relative z-10 hover:text-black px-4 py-2 rounded-full text-blackc transition-colors duration-300'
+      >
+        Registrarse
+      </a>
     </div>
   </nav>
 </header>
+
+<script>
+  const loginButton = document.querySelector(
+    '.login'
+  ) as HTMLAnchorElement | null
+  const registerButton = document.querySelector(
+    '.register'
+  ) as HTMLAnchorElement | null
+  const bgSlider = document.querySelector('.bg-slider') as HTMLDivElement | null
+  const userSpan = document.querySelector('.user') as HTMLSpanElement | null
+  const logoutButton = document.querySelector(
+    '.logout'
+  ) as HTMLButtonElement | null
+  const containerAuth = document.querySelector(
+    '.container-auth'
+  ) as HTMLDivElement | null
+  const containerUser = document.querySelector(
+    '.container-user'
+  ) as HTMLDivElement | null
+
+  const setColors = (active: String) => {
+    if (!loginButton || !registerButton || !bgSlider) return
+    if (active === 'login') {
+      bgSlider.style.left = '0%'
+      loginButton.classList.remove('text-whitecc')
+      loginButton.classList.add('text-blackc')
+      registerButton.classList.remove('text-blackc')
+      registerButton.classList.add('text-whitecc')
+    } else if (active === 'register') {
+      bgSlider.style.left = '50%'
+      loginButton.classList.remove('text-blackc')
+      loginButton.classList.add('text-whitecc')
+      registerButton.classList.remove('text-whitecc')
+      registerButton.classList.add('text-blackc')
+    }
+  }
+
+  loginButton?.addEventListener('mouseover', () => setColors('login'))
+  loginButton?.addEventListener('mouseout', () => setColors('register'))
+
+  registerButton?.addEventListener('mouseover', () => setColors('register'))
+  registerButton?.addEventListener('mouseout', () => setColors('register'))
+
+  // Estado inicial: resaltado en "Registrarse"
+  setColors('register')
+  window.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token')
+    const username = localStorage.getItem('username')
+    if (
+      token &&
+      username &&
+      containerAuth &&
+      containerUser &&
+      userSpan &&
+      logoutButton
+    ) {
+      // Oculta los botones y el fondo deslizante
+      containerAuth.style.display = 'none'
+      containerUser.style.display = 'flex'
+      // Crea el contenedor de usuario y cerrar sesión
+      userSpan.innerHTML = username
+
+      // Evento para cerrar sesión
+      logoutButton.addEventListener('click', () => {
+        containerAuth.style.display = 'flex'
+        containerUser.style.display = 'none'
+        localStorage.removeItem('token')
+        localStorage.removeItem('role')
+        localStorage.removeItem('username')
+        localStorage.removeItem('userId')
+        document.cookie = 'auth_token=; path=/; max-age=0'
+        window.location.reload()
+      })
+    }
+  })
+</script>
