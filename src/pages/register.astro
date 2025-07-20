@@ -10,12 +10,12 @@ import LayoutAuth from '../layouts/LayoutAuth.astro'
     <Ecuador class='size-10/12' />
   </div>
   <div
-    class='login-container w-lg m-auto border px-6 py-4 rounded-xl bg-blackc'
+    class='register-container w-lg m-auto border px-6 py-4 rounded-xl bg-blackc'
   >
     <h1 class='text-center font-semibold text-3xl mb-4 p-4'>
       Crear nueva cuenta
     </h1>
-    <form id='login-form' class='flex flex-col gap-4'>
+    <form id='register-form' class='flex flex-col gap-4'>
       <div class='flex gap-4'>
         <div class='relative w-full flex flex-col gap-y-2'>
           <label for='firstName' class='text-sm'>Nombre</label>
@@ -116,7 +116,6 @@ import LayoutAuth from '../layouts/LayoutAuth.astro'
           name='password'
           id='password'
           placeholder='*********'
-          pattern='^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$'
           required
         />
       </div>
@@ -142,6 +141,7 @@ import LayoutAuth from '../layouts/LayoutAuth.astro'
           href='/login'>Iniciar Sesión</a
         ></span
       >
+      <div id='result' class='text-sm'></div>
     </form>
   </div>
 </LayoutAuth>
@@ -151,4 +151,78 @@ import LayoutAuth from '../layouts/LayoutAuth.astro'
   ) {
     window.location.href = '/'
   }
+  const form = document.getElementById('register-form')
+  const result = document.getElementById('result')
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault()
+    result.textContent = 'Por favor espera...'
+
+    const formData = new FormData(form)
+    const object = Object.fromEntries(formData)
+    object.enabled = form.elements['enabled'].checked
+    const json = JSON.stringify(object)
+    console.log(json)
+
+    try {
+      const registerResponse = await fetch('http://localhost:8081/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: json
+      })
+
+      if (registerResponse.ok) {
+        result.textContent = 'Usuario creado, iniciando sesión...'
+        result.className =
+          'text-center text-base font-semibold mb-2 text-yellow-400'
+
+        const loginData = {
+          email: object.email,
+          password: object.password
+        }
+
+        const loginResponse = await fetch('http://localhost:8081/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          },
+          body: JSON.stringify(loginData)
+        })
+
+        if (loginResponse.ok) {
+          const data = await loginResponse.json()
+          localStorage.setItem('token', data.token)
+          localStorage.setItem('role', data.role)
+          localStorage.setItem('username', data.username)
+          localStorage.setItem('userId', data.userId)
+          document.cookie = `auth_token=${data.token}; path=/; max-age=604800`
+          result.textContent =
+            '¡Registro e inicio de sesión exitosos! Redirigiendo...'
+          result.className =
+            'text-center text-base font-semibold mb-2 text-green-400'
+          setTimeout(() => {
+            window.location.href = '/'
+          }, 1200)
+        } else {
+          result.textContent =
+            'Usuario creado, pero error al iniciar sesión automática.'
+          result.className =
+            'text-center text-base font-semibold mb-2 text-red-400'
+        }
+      } else {
+        const errorData = await registerResponse.json()
+        result.textContent = errorData.message || 'Error al crear usuario.'
+        result.className =
+          'text-center text-base font-semibold mb-2 text-red-400'
+      }
+    } catch (error) {
+      console.error(error)
+      result.textContent = 'No se pudo conectar al servidor.'
+      result.className = 'text-center text-base font-semibold mb-2 text-red-400'
+    }
+  })
 </script>
