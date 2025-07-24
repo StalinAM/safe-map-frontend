@@ -1,8 +1,11 @@
 ---
-import Welcome from '../components/Welcome.astro'
+import MapContainer from '../components/MapContainer'
 import Layout from '../layouts/Layout.astro'
 ---
 
 <Layout>
-  <Welcome />
+  <section class='max-w-7xl mx-auto px-4'>
+    <h1 class='text-2xl mb-4 text-center text-whitec'>Mapa</h1>
+    <MapContainer client:only />
+  </section>
 </Layout>
