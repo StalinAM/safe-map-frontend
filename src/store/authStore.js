@@ -1,4 +1,4 @@
-import { create } from 'zustand/vanilla'
+import { create } from 'zustand'
 
 export const useAuthStore = create((set) => ({
   token: localStorage.getItem('token') || null,
