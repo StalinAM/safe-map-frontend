@@ -1,0 +1,16 @@
+---
+import AdminDashboard from '../components/AdminDashboard'
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout>
+  <AdminDashboard client:only />
+</Layout>
+
+<script is:inline>
+  // Verifica el rol en localStorage y redirige si no es admin
+  const role = localStorage.getItem('role')
+  if (role !== 'ADMIN') {
+    window.location.href = '/'
+  }
+</script>
