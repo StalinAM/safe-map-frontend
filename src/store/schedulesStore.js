@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 
+const API_URL = 'http://localhost:8080/schedules'
+
 export const useSchedulesStore = create((set) => ({
   schedules: [],
   loading: false,
@@ -7,7 +9,7 @@ export const useSchedulesStore = create((set) => ({
   fetchSchedules: async () => {
     set({ loading: true, error: null })
     try {
-      const response = await fetch('http://localhost:8083/schedules')
+      const response = await fetch({ API_URL })
       if (!response.ok) throw new Error('Error al obtener los horarios')
       const data = await response.json()
       console.log(data)
@@ -21,14 +23,17 @@ export const useSchedulesStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:8083/schedules', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token ? `Bearer ${token}` : ''
-        },
-        body: JSON.stringify(schedule)
-      })
+      const response = await fetch(
+        { API_URL },
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: token ? `Bearer ${token}` : ''
+          },
+          body: JSON.stringify(schedule)
+        }
+      )
       if (!response.ok) throw new Error('Error al agregar el horario')
       const newSchedule = await response.json()
       set((state) => ({
@@ -45,7 +50,7 @@ export const useSchedulesStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:8083/schedules/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: token ? `Bearer ${token}` : ''
@@ -64,7 +69,7 @@ export const useSchedulesStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:8083/schedules/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

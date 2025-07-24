@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 
+const API_URL = 'http://localhost:8080/places'
+
 export const useRatingsStore = create((set) => ({
   ratings: [],
   loading: false,
@@ -7,7 +9,7 @@ export const useRatingsStore = create((set) => ({
   fetchRatings: async (placeId) => {
     set({ loading: true, error: null })
     try {
-      const res = await fetch(`http://localhost:8082/places/${placeId}/ratings`)
+      const res = await fetch(`${API_URL}/${placeId}/ratings`)
       if (!res.ok) throw new Error('Error al obtener calificaciones')
       const data = await res.json()
       set({ ratings: data, loading: false })
@@ -19,17 +21,14 @@ export const useRatingsStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const token = localStorage.getItem('token')
-      const res = await fetch(
-        `http://localhost:8082/places/${placeId}/ratings`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: token ? `Bearer ${token}` : ''
-          },
-          body: JSON.stringify({ score, comment })
-        }
-      )
+      const res = await fetch(`${API_URL}/${placeId}/ratings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token ? `Bearer ${token}` : ''
+        },
+        body: JSON.stringify({ score, comment })
+      })
       if (!res.ok) throw new Error('Error al enviar la calificación')
       return true
     } catch (error) {

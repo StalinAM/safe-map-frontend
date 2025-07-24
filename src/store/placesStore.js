@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 
+const API_URL = 'http://localhost:8080/places'
+
 export const usePlacesStore = create((set) => ({
   places: [],
   loading: false,
@@ -7,7 +9,7 @@ export const usePlacesStore = create((set) => ({
   fetchPlaces: async () => {
     set({ loading: true, error: null })
     try {
-      const response = await fetch('http://localhost:8082/places')
+      const response = await fetch(API_URL)
       if (!response.ok) throw new Error('Error al obtener los lugares')
       const data = await response.json()
 
@@ -22,7 +24,7 @@ export const usePlacesStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:8082/places', {
+      const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -46,7 +48,7 @@ export const usePlacesStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:8082/places/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +71,7 @@ export const usePlacesStore = create((set) => ({
   fetchPlaceSafe: async () => {
     set({ loading: true, error: null })
     try {
-      const response = await fetch('http://localhost:8082/places/safe')
+      const response = await fetch(`${API_URL}/safe`)
       if (!response.ok) throw new Error('Error al obtener los lugares')
       const data = await response.json()
 
@@ -82,7 +84,7 @@ export const usePlacesStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:8082/places/${id}`, {
+      const response = await fetch(`${API_URL}/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: token ? `Bearer ${token}` : ''

@@ -1,7 +1,7 @@
 // eventStore.js
 import { create } from 'zustand'
 
-const API_URL = 'http://localhost:8084/events'
+const API_URL = 'http://localhost:8080/events'
 
 export const useEventStore = create((set, get) => ({
   events: [],
